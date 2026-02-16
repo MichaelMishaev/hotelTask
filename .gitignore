@@ -1,0 +1,45 @@
+# .NET
+backend/**/bin/
+backend/**/obj/
+*.user
+*.suo
+.vs/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+
+# Test results & coverage
+coverage/
+TestResults/
+backend/coverage-report/
+backend/coverage-results/
+frontend/coverage/
+frontend/test-results/
+playwright-report/
+
+# Claude / AI
+.claude/
+CLAUDE.md
+ANALYTICS_IMPLEMENTATION.md
+
+# Docs (private)
+docs/
+
+# Screenshots
+*.png
+
+# Playwright MCP
+.playwright-mcp/

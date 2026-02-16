@@ -1,0 +1,221 @@
+/* =====================================================
+   Modern Calendar – react-day-picker v9 (2026 UX)
+   ===================================================== */
+
+/* --- Variables & Root --- */
+.rdp-root {
+  --rdp-accent-color: #1152d4;
+  --rdp-accent-background-color: rgba(17, 82, 212, 0.08);
+  --rdp-font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  --rdp-day-height: 48px;
+  --rdp-day-width: 48px;
+  --rdp-day_button-height: 44px;
+  --rdp-day_button-width: 44px;
+  --rdp-day_button-border-radius: 50%;
+  --rdp-day_button-border: 2px solid transparent;
+
+  --rdp-selected-border: 2px solid var(--rdp-accent-color);
+  --rdp-disabled-opacity: 0.3;
+  --rdp-today-color: var(--rdp-accent-color);
+  --rdp-nav-height: 3rem;
+  --rdp-nav_button-height: 2.5rem;
+  --rdp-nav_button-width: 2.5rem;
+
+  --rdp-range_middle-background-color: var(--rdp-accent-background-color);
+  --rdp-range_middle-color: #111318;
+  --rdp-range_start-color: white;
+  --rdp-range_start-date-background-color: var(--rdp-accent-color);
+  --rdp-range_end-color: white;
+  --rdp-range_end-date-background-color: var(--rdp-accent-color);
+
+  --rdp-range_start-background: linear-gradient(
+    90deg,
+    transparent 50%,
+    var(--rdp-range_middle-background-color) 50%
+  );
+  --rdp-range_end-background: linear-gradient(
+    90deg,
+    var(--rdp-range_middle-background-color) 50%,
+    transparent 50%
+  );
+
+  --rdp-animation_duration: 0.25s;
+  --rdp-animation_timing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  margin: 0;
+  width: 100%;
+  font-family: var(--rdp-font-family);
+}
+
+/* --- Months container: full-width --- */
+.rdp-months {
+  max-width: 100%;
+  width: 100%;
+}
+
+.rdp-month {
+  width: 100%;
+}
+
+/* --- Caption / month title --- */
+.rdp-month_caption {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111318;
+  letter-spacing: -0.01em;
+  height: var(--rdp-nav-height);
+  align-items: center;
+}
+
+.rdp-caption_label {
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+}
+
+/* --- Navigation buttons --- */
+.rdp-button_previous,
+.rdp-button_next {
+  width: var(--rdp-nav_button-width);
+  height: var(--rdp-nav_button-height);
+  border-radius: 12px;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.rdp-button_previous:hover,
+.rdp-button_next:hover {
+  background-color: rgba(17, 82, 212, 0.08);
+}
+
+.rdp-button_previous:active,
+.rdp-button_next:active {
+  transform: scale(0.92);
+}
+
+.rdp-chevron {
+  fill: #111318;
+  width: 20px;
+  height: 20px;
+}
+
+/* --- Month grid: full-width --- */
+.rdp-month_grid {
+  width: 100%;
+}
+
+/* --- Weekday headers --- */
+.rdp-weekday {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.5rem 0;
+  opacity: 1;
+}
+
+/* --- Day cells --- */
+.rdp-day {
+  width: var(--rdp-day-width);
+  height: var(--rdp-day-height);
+}
+
+.rdp-day_button {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111318;
+  border-radius: 50%;
+  transition: background-color 0.15s, color 0.15s, transform 0.1s;
+}
+
+.rdp-day_button:hover {
+  background-color: rgba(17, 82, 212, 0.06);
+}
+
+.rdp-day_button:active {
+  transform: scale(0.9);
+}
+
+/* --- Disabled days --- */
+.rdp-disabled .rdp-day_button {
+  color: #d1d5db;
+  cursor: default;
+}
+
+.rdp-disabled .rdp-day_button:hover {
+  background-color: transparent;
+  transform: none;
+}
+
+/* --- Today --- */
+.rdp-today:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle) .rdp-day_button {
+  color: var(--rdp-accent-color);
+  font-weight: 700;
+  position: relative;
+}
+
+.rdp-today:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle) .rdp-day_button::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--rdp-accent-color);
+}
+
+/* --- Selected (generic) --- */
+.rdp-selected .rdp-day_button {
+  border-color: transparent;
+  font-weight: 700;
+}
+
+/* --- Range Start --- */
+.rdp-range_start .rdp-day_button {
+  background-color: var(--rdp-accent-color);
+  color: white;
+  box-shadow: 0 2px 8px rgba(17, 82, 212, 0.3);
+}
+
+/* --- Range End --- */
+.rdp-range_end .rdp-day_button {
+  background-color: var(--rdp-accent-color);
+  color: white;
+  box-shadow: 0 2px 8px rgba(17, 82, 212, 0.3);
+}
+
+/* --- Range Middle --- */
+.rdp-range_middle {
+  background-color: var(--rdp-range_middle-background-color);
+}
+
+.rdp-range_middle .rdp-day_button {
+  color: var(--rdp-accent-color);
+  font-weight: 600;
+  border-radius: 0;
+  border: none;
+}
+
+.rdp-range_middle .rdp-day_button:hover {
+  background-color: rgba(17, 82, 212, 0.12);
+}
+
+/* --- Start+End same day --- */
+.rdp-range_start.rdp-range_end {
+  background: transparent;
+}
+
+/* --- Focus ring for accessibility --- */
+.rdp-day_button:focus-visible {
+  outline: 2px solid var(--rdp-accent-color);
+  outline-offset: 2px;
+}
+
+.rdp-button_previous:focus-visible,
+.rdp-button_next:focus-visible {
+  outline: 2px solid var(--rdp-accent-color);
+  outline-offset: 2px;
+}

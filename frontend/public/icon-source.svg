@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="96" fill="#1152d4"/>
+
+  <!-- Hotel building - main tower -->
+  <rect x="156" y="120" width="200" height="280" rx="8" fill="#ffffff"/>
+
+  <!-- Roof accent -->
+  <rect x="156" y="120" width="200" height="16" rx="8" fill="#fbbf24"/>
+
+  <!-- Windows grid (3 cols x 4 rows) -->
+  <!-- Row 1 -->
+  <rect x="182" y="160" width="32" height="28" rx="4" fill="#1152d4"/>
+  <rect x="240" y="160" width="32" height="28" rx="4" fill="#1152d4"/>
+  <rect x="298" y="160" width="32" height="28" rx="4" fill="#1152d4"/>
+  <!-- Row 2 -->
+  <rect x="182" y="204" width="32" height="28" rx="4" fill="#1152d4"/>
+  <rect x="240" y="204" width="32" height="28" rx="4" fill="#fbbf24"/>
+  <rect x="298" y="204" width="32" height="28" rx="4" fill="#1152d4"/>
+  <!-- Row 3 -->
+  <rect x="182" y="248" width="32" height="28" rx="4" fill="#fbbf24"/>
+  <rect x="240" y="248" width="32" height="28" rx="4" fill="#1152d4"/>
+  <rect x="298" y="248" width="32" height="28" rx="4" fill="#1152d4"/>
+  <!-- Row 4 -->
+  <rect x="182" y="292" width="32" height="28" rx="4" fill="#1152d4"/>
+  <rect x="240" y="292" width="32" height="28" rx="4" fill="#1152d4"/>
+  <rect x="298" y="292" width="32" height="28" rx="4" fill="#fbbf24"/>
+
+  <!-- Entrance door -->
+  <rect x="230" y="346" width="52" height="54" rx="26" fill="#0a3a9e"/>
+  <rect x="238" y="354" width="36" height="46" rx="18" fill="#1a5ee0"/>
+
+  <!-- Stars above building -->
+  <polygon points="256,80 260,92 272,92 262,100 266,112 256,104 246,112 250,100 240,92 252,92" fill="#fbbf24"/>
+  <polygon points="196,96 199,104 208,104 201,109 204,117 196,112 188,117 191,109 184,104 193,104" fill="#fbbf24"/>
+  <polygon points="316,96 319,104 328,104 321,109 324,117 316,112 308,117 311,109 304,104 313,104" fill="#fbbf24"/>
+
+  <!-- "GRAND" text below -->
+  <text x="256" y="440" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="44" font-weight="bold" fill="#ffffff" letter-spacing="6">GRAND</text>
+</svg>
