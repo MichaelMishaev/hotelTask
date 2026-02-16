@@ -11,7 +11,7 @@ Full-stack hotel booking application built with **.NET 8** (Clean Architecture, 
 
 ```bash
 # Option 1: One command
-./start.sh
+./scripts/start.sh
 
 # Option 2: Manual
 docker compose up --build
@@ -29,7 +29,7 @@ docker compose up --build
 ### Stop
 
 ```bash
-./stop.sh
+./scripts/stop.sh
 # or
 docker compose down
 ```
@@ -398,12 +398,14 @@ For a full production deployment, these would be added: BCrypt password hashing 
 
 ### Backend Coverage
 
+> **Note:** Due to the 4-5 hour time constraint, testing efforts were focused on the Domain and Application layers (core business logic). API and Infrastructure layer tests were scaffolded but not implemented within the time limit.
+
 | Assembly | Line Coverage | Notes |
 |----------|-------------|-------|
 | **HotelBooking.Domain** | **27.5%** | Core entities tested |
 | **HotelBooking.Application** | **22.8%** | CQRS handlers tested |
-| HotelBooking.Api | 0% | No controller-level tests |
-| HotelBooking.Infrastructure | 0% | No integration tests |
+| HotelBooking.Api | 0% | Scaffolded, not completed (time limit) |
+| HotelBooking.Infrastructure | 0% | Scaffolded, not completed (time limit) |
 
 ### Core Business Logic Coverage
 

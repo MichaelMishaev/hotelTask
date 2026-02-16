@@ -78,7 +78,7 @@ echo -e "  ${GREEN}API Gateway:${NC}     http://localhost:5010"
 echo -e "  ${GREEN}RabbitMQ UI:${NC}     http://localhost:15672  (guest/guest)"
 echo -e "  ${GREEN}MailHog UI:${NC}      http://localhost:8025"
 echo ""
-echo -e "  ${YELLOW}To stop:${NC}  ./stop.sh  or  docker compose down"
+echo -e "  ${YELLOW}To stop:${NC}  ./scripts/stop.sh  or  docker compose down"
 echo ""
 
 # Open browser
