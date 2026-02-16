@@ -1,23 +1,20 @@
 # Hotel Booking Platform
 
-Full-stack hotel booking application built with **.NET 8** (Clean Architecture, CQRS) and **React 19** (TypeScript, Tailwind CSS v4).
+A full-stack hotel booking app — **.NET 8** backend with Clean Architecture and CQRS, **React 19** frontend with TypeScript and Tailwind CSS v4. Built as a take-home project within a 4-5 hour time limit.
 
-## Quick Start
+## Getting Started
 
-### Prerequisites
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
-
-### Run the App
+You just need [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
 
 ```bash
-# Option 1: One command
+# One command does it all
 ./scripts/start.sh
 
-# Option 2: Manual
+# Or manually
 docker compose up --build
 ```
 
-**That's it.** The script builds everything, waits for services to be healthy, and opens the browser.
+That's it. The script builds everything, waits for services to be healthy, and opens your browser.
 
 | Service | URL |
 |---------|-----|
@@ -26,7 +23,7 @@ docker compose up --build
 | Swagger Docs | http://localhost:5288/swagger |
 | RabbitMQ Management | http://localhost:15672 (guest/guest) |
 
-### Stop
+To stop everything:
 
 ```bash
 ./scripts/stop.sh
@@ -34,7 +31,9 @@ docker compose up --build
 docker compose down
 ```
 
-## Demo Users
+## Try It Out
+
+Log in with any of these demo accounts:
 
 | Name | Email | Password | Role |
 |------|-------|----------|------|
@@ -44,17 +43,17 @@ docker compose down
 
 ---
 
-## Architecture
+## How It's Built
 
-### System Overview
+### The Big Picture
 
-**Clean Architecture** with 4 layers (inner layers never reference outer):
+The backend follows **Clean Architecture** — four layers where dependencies only point inward. The inner layers have no idea the outer layers exist:
 
 ```
 Domain (innermost) -> Application -> Infrastructure -> Api (outermost)
 ```
 
-**Key Constraint:** Inner layers NEVER reference outer layers. Dependencies always point inward.
+This keeps the business logic completely independent of frameworks, databases, or HTTP concerns.
 
 ```mermaid
 flowchart TB
@@ -184,9 +183,9 @@ flowchart TB
     AUTH --> MIDDLEWARE
 ```
 
-### CQRS Request Flow (Booking Creation)
+### How a Booking Gets Created (CQRS Flow)
 
-Full request lifecycle through all layers when creating a booking:
+Here's what happens end-to-end when a user books a room — from the React frontend all the way to the database and back:
 
 ```mermaid
 sequenceDiagram
@@ -235,7 +234,7 @@ sequenceDiagram
     CTRL-->>-FE: 201 Created + BookingDto
 ```
 
-### Layer Dependency Rules
+### Layer Rules
 
 ```
 Domain (innermost)     - Pure C#, zero external dependencies
@@ -250,7 +249,7 @@ Infrastructure         - Implements Domain interfaces. EF Core, Npgsql, JWT.
 API (outermost)        - Composition root. Controllers dispatch via IMediator only.
 ```
 
-### Database Schema (Entity Relationship)
+### Data Model
 
 ```
 Rooms ──────────< Bookings >────────── Guests
@@ -269,7 +268,7 @@ LoyaltyRewards (standalone catalog)
 ConciergeServices ──< ConciergeReservations
 ```
 
-### Project Structure
+### Folder Structure
 
 ```
 backend/
@@ -324,195 +323,170 @@ frontend/
 
 | Method | Endpoint | Description | Auth |
 |--------|----------|-------------|------|
-| POST | /api/auth/login | Authenticate (returns JWT) | Public |
-| GET | /api/auth/users | List demo users | Public |
-| GET | /api/rooms/availability?checkIn=date&checkOut=date | Search available rooms | Required |
-| POST | /api/bookings | Create a booking | Required |
-| GET | /api/bookings/{id} | Get booking details | Required |
-| PUT | /api/bookings/{id} | Update booking dates | Required |
-| DELETE | /api/bookings/{id} | Cancel booking (soft delete) | Required |
-| PATCH | /api/bookings/{id}/status | Update booking status | Staff/Admin |
-| GET | /api/guests/{id}/bookings | Get guest's bookings | Required |
+| POST | /api/auth/login | Log in and get a JWT token | Public |
+| GET | /api/auth/users | List the demo users | Public |
+| GET | /api/rooms/availability?checkIn=date&checkOut=date | Find available rooms for dates | Required |
+| POST | /api/bookings | Book a room | Required |
+| GET | /api/bookings/{id} | View a booking | Required |
+| PUT | /api/bookings/{id} | Change booking dates | Required |
+| DELETE | /api/bookings/{id} | Cancel a booking (soft delete) | Required |
+| PATCH | /api/bookings/{id}/status | Update status (check-in, check-out) | Staff/Admin |
+| GET | /api/guests/{id}/bookings | See a guest's bookings | Required |
 
 ---
 
 ## Security
 
-The platform implements **defense in depth** - multiple overlapping security layers:
+The app uses a **defense in depth** approach — multiple layers of protection so no single failure compromises the system.
 
-### Access Control (RBAC)
+### Who Can Do What
 
-| Role | Can Do | Cannot Do |
-|------|--------|-----------|
-| **Guest** | Search rooms, create/view/cancel own bookings | See other guests' bookings or admin data |
-| **Staff** | Manage all bookings, update room status, view check-ins | Access admin dashboard or manage users |
-| **Admin** | Full access: dashboard, users, audit log, all bookings | N/A (full access) |
+| Role | Allowed | Not Allowed |
+|------|---------|-------------|
+| **Guest** | Search rooms, manage own bookings | See other guests' data or admin features |
+| **Staff** | Manage all bookings, check-ins/check-outs | Admin dashboard or user management |
+| **Admin** | Everything | — |
 
-### Authentication
+A guest trying to peek at another guest's booking gets blocked immediately.
 
-- **JWT tokens** with HMAC-SHA256 signing, 1-hour expiry
-- Expired tokens auto-detected on page load with automatic logout
-- Demo uses simplified login; production would add BCrypt password hashing, account lockout, and MFA
+### How Authentication Works
 
-### Attack Prevention
+Users log in and receive a **JWT token** — a signed pass that proves their identity for the next hour. Tokens are signed with HMAC-SHA256 so they can't be forged or tampered with. The app checks token expiry on every page load and logs users out automatically when it expires.
 
-| Threat | Protection |
-|--------|-----------|
-| **Brute Force** | Rate limiting: 100 req/min global, 5 login attempts per 15 min |
-| **SQL Injection** | Parameterized queries via Entity Framework Core (structurally impossible) |
-| **XSS** | React auto-escaping + FluentValidation + Content Security Policy headers |
-| **Clickjacking** | X-Frame-Options header prevents iframe embedding |
-| **Payload Abuse** | 5MB request size limit |
+> This is a demo, so login is simplified. In production, I'd add BCrypt password hashing, account lockout after failed attempts, and multi-factor authentication.
 
-### Security Headers
+### Protecting Against Common Attacks
 
-Every response includes: `X-Frame-Options`, `Content-Security-Policy`, `X-Content-Type-Options`, `Strict-Transport-Security`, `Referrer-Policy`, `Permissions-Policy`
+| Threat | How It's Handled |
+|--------|-----------------|
+| **Brute force** | Rate limiting — 100 requests/min globally, 5 login attempts per 15 minutes |
+| **SQL injection** | All queries go through EF Core's parameterized inputs — injection is structurally impossible |
+| **XSS** | React escapes all text automatically, inputs are validated with FluentValidation, CSP headers restrict script sources |
+| **Clickjacking** | X-Frame-Options prevents the app from being embedded in malicious iframes |
+| **Oversized payloads** | 5MB request size cap |
 
-### Data Protection
+### Security Headers on Every Response
 
-- **No hard deletes** - cancelled bookings are marked, never erased
-- **Server-authoritative pricing** - users cannot manipulate prices
-- **Sanitized errors** - internal details hidden in production, replaced with tracking IDs
-- **Immutable audit trail** - every action logged with who and when
+`X-Frame-Options`, `Content-Security-Policy`, `X-Content-Type-Options`, `Strict-Transport-Security`, `Referrer-Policy`, `Permissions-Policy`
 
-### Security Monitoring
+### How Data Is Protected
 
-Structured logging (Serilog) captures failed logins (401), unauthorized access (403), and rate limit violations (429) with IP address and user context.
+- Cancelled bookings are **marked as cancelled, never deleted** — full history is preserved
+- The **server always calculates pricing** — the client can't manipulate amounts
+- Error messages in production are **generic with a tracking ID** — no internal details leak
+- Every action is **logged to an immutable audit trail** with who did it and when
 
-### Production Readiness Additions
+### Monitoring
 
-For a full production deployment, these would be added: BCrypt password hashing (12+ rounds), account lockout (5 failed attempts / 15 min), MFA via TOTP, short-lived access tokens (15 min) with refresh tokens, HttpOnly cookie auth, CSRF protection, Azure Key Vault / AWS Secrets Manager, third-party penetration testing.
+Structured logging via Serilog captures failed logins (401), unauthorized access attempts (403), and rate limit violations (429) with IP and user context for alerting.
+
+### What I'd Add for Production
+
+BCrypt password hashing (12+ rounds), account lockout after 5 failed attempts, MFA via authenticator app, short-lived tokens (15 min) with refresh tokens, HttpOnly cookie storage, CSRF tokens, secret management (Azure Key Vault or AWS Secrets Manager), and a third-party penetration test.
 
 ---
 
 ## Test Coverage
 
-### Summary
+### Overview
 
 | Metric | Backend (.NET 8) | Frontend (React TS) |
 |--------|-------------------|---------------------|
 | **Framework** | xUnit 2.5.3 + FluentAssertions | Vitest 4.0.18 + Testing Library |
 | **Tests Passed** | 69 | 3 |
 | **Tests Failed** | 0 | 0 |
-| **Test Projects** | 4 (2 with tests, 2 scaffolded) | 1 unit + 3 e2e (Playwright) |
+| **Test Projects** | 4 (2 active, 2 scaffolded) | 1 unit + 3 e2e (Playwright) |
 
-### Backend Coverage
+### Backend
 
-> **Note:** Due to the 4-5 hour time constraint, testing efforts were focused on the Domain and Application layers (core business logic). API and Infrastructure layer tests were scaffolded but not implemented within the time limit.
+> With the 4-5 hour time limit, I focused testing on what matters most — the Domain and Application layers where the core business logic lives. The API and Infrastructure test projects are scaffolded and ready to go, but weren't completed in time.
 
 | Assembly | Line Coverage | Notes |
 |----------|-------------|-------|
 | **HotelBooking.Domain** | **27.5%** | Core entities tested |
 | **HotelBooking.Application** | **22.8%** | CQRS handlers tested |
-| HotelBooking.Api | 0% | Scaffolded, not completed (time limit) |
-| HotelBooking.Infrastructure | 0% | Scaffolded, not completed (time limit) |
+| HotelBooking.Api | 0% | Scaffolded, not completed in time |
+| HotelBooking.Infrastructure | 0% | Scaffolded, not completed in time |
 
-### Core Business Logic Coverage
+### What's Actually Tested (the Important Stuff)
 
-| Logic | Tested | Coverage |
-|-------|--------|----------|
-| Pricing ($100/night * nights) | Yes | PricingCalculator 100% |
+| Business Rule | Covered | Coverage |
+|---------------|---------|----------|
+| Pricing calculation ($100/night) | Yes | PricingCalculator 100% |
 | Date range validation | Yes | DateRange 86.6% |
 | Booking status transitions | Yes | Booking entity 98.1% |
-| Room availability check | Yes | Handler 100% |
+| Room availability logic | Yes | Handler 100% |
 | Guest validation | Yes | Guest entity 88.8% |
 
-### Mandatory Endpoint Coverage
+### Every Required Endpoint Has Handler Tests
 
-| Endpoint | Domain Tests | Handler Tests | API Tests |
-|----------|-------------|---------------|-----------|
-| `GET /api/rooms/availability` | DateRange tested | GetAvailableRoomsQueryHandler 100% | - |
-| `POST /api/bookings` | Booking.Create() 98% | CreateBookingCommandHandler 100% | - |
-| `GET /api/bookings/{id}` | - | GetBookingByIdQueryHandler 100% | - |
-| `PUT /api/bookings/{id}` | Booking.UpdateDates() tested | UpdateBookingCommandHandler 100% | - |
-| `DELETE /api/bookings/{id}` | Booking.Cancel() tested | CancelBookingCommandHandler 100% | - |
-| `GET /api/guests/{id}/bookings` | - | GetGuestBookingsQueryHandler 100% | - |
+| Endpoint | Domain Tests | Handler Tests |
+|----------|-------------|---------------|
+| `GET /api/rooms/availability` | DateRange tested | GetAvailableRoomsQueryHandler 100% |
+| `POST /api/bookings` | Booking.Create() 98% | CreateBookingCommandHandler 100% |
+| `GET /api/bookings/{id}` | — | GetBookingByIdQueryHandler 100% |
+| `PUT /api/bookings/{id}` | Booking.UpdateDates() tested | UpdateBookingCommandHandler 100% |
+| `DELETE /api/bookings/{id}` | Booking.Cancel() tested | CancelBookingCommandHandler 100% |
+| `GET /api/guests/{id}/bookings` | — | GetGuestBookingsQueryHandler 100% |
 
 ### Running Tests
 
 ```bash
-# Backend tests (69 tests: unit + integration)
+# Backend (69 tests)
 docker compose exec backend dotnet test /src/HotelBooking.sln
 
 # Frontend unit tests
 cd frontend && npm test
 
-# E2E tests (requires running app)
+# E2E tests (app must be running)
 cd frontend && npx playwright test
 ```
 
 ---
 
-## Key Design Decisions
+## Why I Made These Choices
 
-Every architectural choice was made deliberately, with alternatives considered and trade-offs documented.
+Every decision here was deliberate. I considered alternatives and picked what made sense for this scope. Here's the reasoning behind the big ones.
 
-### DEC-001: Clean Architecture for Booking Service
+### Clean Architecture (not N-Layer or Minimal API)
 
-- **Chose**: Clean Architecture (Domain -> Application -> Infrastructure -> Api)
-- **Over**: Traditional N-Layer, Vertical Slice Architecture, Minimal API single project
-- **Why**: The PRD explicitly evaluates "code quality and architectural decisions." Clean Architecture provides clear separation of concerns, testability at each layer, and framework-independent domain logic. The dependency rule (inner layers never reference outer) keeps business logic pure.
-- **Trade-off**: More boilerplate and projects to manage, but best testability and demonstrates senior architecture skills.
+I went with Clean Architecture because the assignment evaluates "code quality and architectural decisions." It gives clear separation, testability at every layer, and keeps domain logic completely framework-independent. Yes, it's more boilerplate than a Minimal API — but it shows I understand when and why to use it.
 
-### DEC-002: CQRS with MediatR
+### CQRS with MediatR (not direct service classes)
 
-- **Chose**: MediatR for Command/Query Responsibility Segregation
-- **Over**: Direct service classes, custom mediator, no CQRS
-- **Why**: Provides natural CQRS separation, pipeline behaviors for cross-cutting concerns (validation, logging, audit), and decouples controllers from business logic. Each handler is single-responsibility and independently testable.
-- **Trade-off**: Adds dependency and indirection, but eliminates boilerplate and enforces clean separation.
+MediatR gives a natural command/query split, lets me plug in cross-cutting concerns (validation, logging, audit) as pipeline behaviors, and keeps each handler focused on one thing. Controllers just dispatch — they don't know what happens after.
 
-### DEC-003: FluentValidation via MediatR Pipeline
+### FluentValidation in the Pipeline (not DataAnnotations)
 
-- **Chose**: FluentValidation with `ValidationBehavior` pipeline
-- **Over**: DataAnnotations, manual handler validation, ASP.NET filter-based validation
-- **Why**: Validators are co-located with commands, the pipeline intercepts all requests automatically (impossible to forget validation), and validators are independently unit-testable.
-- **Trade-off**: Another dependency, slightly more verbose than DataAnnotations.
+Validators live right next to their commands. The pipeline runs them automatically on every request — it's impossible to forget validation. And each validator is independently testable.
 
-### DEC-004: Domain Events for AuditLog
+### Domain Events for the Audit Trail (not manual logging)
 
-- **Chose**: Entities raise domain events dispatched after SaveChanges, written to AuditLog
-- **Over**: Manual AuditLog writes in handlers, EF Core change interceptor, full Event Sourcing
-- **Why**: Domain events capture business intent ("booking cancelled by guest") not just data changes. The interceptor pattern ensures no audit entry is forgotten. Demonstrates Event Sourcing concepts without full complexity.
-- **Trade-off**: More complex than manual logging, but richer context and impossible to forget.
+Instead of writing audit log entries by hand in every handler (easy to forget), entities raise domain events like `BookingCreated` or `BookingCancelled`. These get dispatched after `SaveChanges` and the audit handler writes them. It captures business intent, not just data changes.
 
-### DEC-005: PostgreSQL (not SQL Server)
+### PostgreSQL (not SQL Server)
 
-- **Chose**: PostgreSQL via Npgsql EF Core provider
-- **Over**: SQL Server, SQLite, in-memory only
-- **Why**: Railway natively supports PostgreSQL. Lighter Docker image. JSONB support for AuditLog details, proper transactions, and concurrency control.
-- **Trade-off**: Different SQL dialect, but lighter and cloud-native.
+Lighter Docker image, native Railway support, and JSONB for flexible audit log details. SQL Server would work fine too — PostgreSQL just fits the deployment story better.
 
-### DEC-006: Custom UI Components with Tailwind (No Library)
+### Custom Tailwind Components (no UI library)
 
-- **Chose**: Build all ~15 UI components from scratch with Tailwind
-- **Over**: shadcn/ui, Radix UI, MUI, Chakra UI
-- **Why**: A senior take-home should demonstrate CSS/component architecture skill, not dependency management. Full control, demonstrates Tailwind proficiency and a11y awareness.
-- **Trade-off**: More time on basics, but shows hands-on skill vs dependency management.
+For a take-home, I want to show I can build components — not just install shadcn/ui. With only ~15 components needed, the overhead is minimal and the result demonstrates real CSS and component design skills.
 
-### DEC-007: React Context + Custom Hooks (No Redux)
+### React Context + Hooks (no Redux)
 
-- **Chose**: AuthContext for auth state, custom hooks for data fetching
-- **Over**: Redux Toolkit, Zustand, Jotai, TanStack Query
-- **Why**: 3 pages with only auth as global state. Redux for this is a forklift for a chair. Knowing when NOT to use Redux is a senior signal.
-- **Trade-off**: No request caching or state devtools, but simpler mental model.
+The app has one piece of global state: auth. Everything else is local. Adding Redux for that would be over-engineering. Knowing when *not* to reach for a state library is just as important as knowing how to use one.
 
-### DEC-008: Native Date Inputs Over Custom Picker
+### Native Date Inputs (no custom picker)
 
-- **Chose**: Browser `<input type="date">`
-- **Over**: react-datepicker, react-day-picker, custom calendar
-- **Why**: Zero bundle size, full accessibility by default, excellent mobile UX. Building a custom date picker would cost hours for marginal benefit.
-- **Trade-off**: Inconsistent cross-browser styling, but perfect a11y and zero time investment.
+Zero bundle impact, accessible out of the box, great mobile UX. A custom date picker would've taken hours for marginal benefit. Pragmatism over polish.
 
-### DEC-009: Microservices Ready (Bonus)
+### Microservices via RabbitMQ (bonus)
 
-- **Chose**: Pricing and Notification as separate services via RabbitMQ, behind YARP Gateway
-- **Over**: Monolith with modules, gRPC, HTTP service communication
-- **Why**: The PRD says "demonstrating microservices architecture." RabbitMQ provides async event-driven communication. YARP is Microsoft's own lightweight reverse proxy.
-- **Trade-off**: More infrastructure, but demonstrates real microservices patterns.
+The assignment mentions microservices, so I built Pricing and Notification as separate services behind a YARP gateway, communicating through RabbitMQ. It's real async event-driven architecture, not just a monolith with extra folders.
 
 ---
 
-## Database Schema
+## Database Tables
 
 | Table | Key Columns |
 |-------|-------------|
