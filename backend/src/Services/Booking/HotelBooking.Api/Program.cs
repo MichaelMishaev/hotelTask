@@ -80,7 +80,7 @@ builder.Services.AddRateLimiter(options =>
 
 // CORS for frontend - Security: explicit headers and methods only
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-    ?? new[] { "http://localhost:5173", "http://localhost:5174", "http://localhost:3000" };
+    ?? new[] { "http://localhost:5173", "http://localhost:5174", "http://localhost:3000", "https://hoteltask-production.up.railway.app" };
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -99,15 +99,12 @@ app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<SecurityAuditMiddleware>();
 
-if (app.Environment.IsDevelopment())
+// Swagger enabled in all environments (demo/interview app)
+app.UseSwagger();
+app.UseSwaggerUI();
+
+if (!app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-else
-{
-    // Security: enforce HTTPS in production
-    app.UseHttpsRedirection();
     app.UseHsts();
 }
 
