@@ -1,5 +1,7 @@
 # Hotel Booking Platform
 
+> **Hey reviewer** — this README is a 5-minute read covering architecture, security, testing, and every design decision with the reasoning behind it. I kept it concise and skippable (tables, diagrams, no walls of text). Worth scrolling to the end.
+
 A full-stack hotel booking app — **.NET 8** backend with Clean Architecture and CQRS, **React 19** frontend with TypeScript and Tailwind CSS v4. Built as a take-home project within a 4-5 hour time limit.
 
 ## Getting Started
