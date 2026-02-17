@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
@@ -46,6 +46,23 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Force play on mobile - iOS Safari blocks autoPlay even when muted
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        }
+      },
+      { threshold: 0.3 },
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -302,11 +319,16 @@ export function LoginPage() {
             <span className="text-sm font-semibold text-white">{t('login.title')} — Full-Stack Demo</span>
           </div>
           <div className="relative bg-black">
+            {/* eslint-disable-next-line */}
             <video
+              ref={videoRef}
               autoPlay
               loop
               muted
               playsInline
+              // @ts-expect-error webkit vendor attr for older iOS
+              webkit-playsinline="true"
+              preload="auto"
               className="w-full aspect-video object-contain"
             >
               <source src="/hotel-hero.mp4" type="video/mp4" />
