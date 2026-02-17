@@ -1,8 +1,7 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 5000
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# =============================================================
+# Stage 1: Build .NET Backend
+# =============================================================
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backend-build
 WORKDIR /src
 
 # Copy csproj files first for layer caching
@@ -17,8 +16,41 @@ RUN dotnet restore src/Services/Booking/HotelBooking.Api/HotelBooking.Api.csproj
 COPY backend/ .
 RUN dotnet publish src/Services/Booking/HotelBooking.Api/HotelBooking.Api.csproj -c Release -o /app/publish --no-restore
 
-FROM base AS final
+# =============================================================
+# Stage 2: Build React Frontend
+# =============================================================
+FROM node:22-alpine AS frontend-build
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+COPY frontend/ .
+ENV VITE_API_URL=/api
+RUN npm run build
+
+# =============================================================
+# Stage 3: Combined Runtime (nginx + .NET)
+# =============================================================
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+
+# Install nginx and supervisor
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends nginx supervisor && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy .NET backend
+WORKDIR /app
+COPY --from=backend-build /app/publish .
+
+# Copy React frontend static files
+COPY --from=frontend-build /app/dist /var/www/html
+
+# Copy config files
+COPY deploy/nginx.conf /etc/nginx/sites-enabled/default.template
+COPY deploy/supervisord.conf /etc/supervisor/conf.d/app.conf
+COPY deploy/start.sh /app/start.sh
+RUN chmod +x /app/start.sh && rm -f /etc/nginx/sites-enabled/default
+
 ENV ASPNETCORE_URLS=http://+:5000
-ENTRYPOINT ["dotnet", "HotelBooking.Api.dll"]
+EXPOSE 80
+
+CMD ["/app/start.sh"]
