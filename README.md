@@ -4,6 +4,20 @@
 
 A full-stack hotel booking app — **.NET 8** backend with Clean Architecture and CQRS, **React 19** frontend with TypeScript and Tailwind CSS v4. Built as a take-home project within a 4-5 hour time limit.
 
+### AI Tooling Used
+
+Modern development means picking the right tool for each job. Here's how I used AI assistants across the workflow:
+
+| Tool | Used For |
+|------|----------|
+| **Google Stitch** | UI/UX design — layout exploration, component design, visual direction |
+| **Ideogram** | Image generation — hotel visuals and branding assets |
+| **Antigraphy** | Client-side rendering — frontend component scaffolding |
+| **Claude Code** | Core development — backend architecture, API implementation, full-stack integration |
+| **ChatGPT Codex** | Research and brainstorming — exploring patterns, evaluating trade-offs, architectural decisions |
+
+Each tool handled what it's best at. The architecture, business logic, and final code are mine.
+
 ## Getting Started
 
 You just need [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
