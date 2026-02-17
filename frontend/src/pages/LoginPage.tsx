@@ -328,7 +328,6 @@ export function LoginPage() {
               muted={videoMuted}
               playsInline
               controls
-              // @ts-expect-error webkit vendor attr for older iOS
               webkit-playsinline="true"
               preload="auto"
               className="w-full aspect-video object-contain"
