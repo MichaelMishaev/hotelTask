@@ -30,14 +30,20 @@ fi
 echo -e "${YELLOW}Stopping any existing containers...${NC}"
 docker compose down --remove-orphans 2>/dev/null || true
 
-# Kill anything already using our ports
+# Free up ports that non-Docker processes might be holding
+# (docker compose down already handled Docker-owned ports above)
 PORTS=(5672 15672 1025 8025 5288 5289 5010 3000)
 for port in "${PORTS[@]}"; do
-    pid=$(lsof -ti :$port 2>/dev/null || true)
-    if [ -n "$pid" ]; then
-        echo -e "${YELLOW}Port $port in use (PID $pid) - killing...${NC}"
+    pids=$(lsof -ti :$port 2>/dev/null || true)
+    for pid in $pids; do
+        cmd=$(ps -p $pid -o comm= 2>/dev/null || true)
+        # don't kill Docker itself - compose down already cleaned those up
+        if [[ "$cmd" == *"docker"* || "$cmd" == *"com.docker"* ]]; then
+            continue
+        fi
+        echo -e "${YELLOW}Port $port in use by $cmd (PID $pid) - killing...${NC}"
         kill -9 $pid 2>/dev/null || true
-    fi
+    done
 done
 sleep 1
 
