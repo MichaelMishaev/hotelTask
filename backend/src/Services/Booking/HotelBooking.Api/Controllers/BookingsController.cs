@@ -23,16 +23,13 @@ public class BookingsController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Create a new booking
-    /// </summary>
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateBookingRequest request, CancellationToken ct)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
         var userRole = User.FindFirstValue(ClaimTypes.Role) ?? "";
 
-        // INV-RBAC-001: Guests can only create bookings for themselves
+        // guests can only book for themselves
         if (userRole == "Guest" && request.GuestId.ToString() != userId)
             return Forbid();
 
@@ -41,15 +38,12 @@ public class BookingsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = booking.Id }, booking);
     }
 
-    /// <summary>
-    /// Get a booking by ID
-    /// </summary>
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var booking = await _mediator.Send(new GetBookingByIdQuery(id), ct);
 
-        // INV-RBAC-001: Guests can only view their own bookings
+        // guests can only see their own bookings
         var userRole = User.FindFirstValue(ClaimTypes.Role) ?? "";
         if (userRole == "Guest" && booking.GuestId.ToString() != (User.FindFirstValue(ClaimTypes.NameIdentifier) ?? ""))
             return Forbid();
@@ -57,9 +51,6 @@ public class BookingsController : ControllerBase
         return Ok(booking);
     }
 
-    /// <summary>
-    /// Update booking dates
-    /// </summary>
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateBookingRequest request, CancellationToken ct)
     {
@@ -75,9 +66,7 @@ public class BookingsController : ControllerBase
         return Ok(updated);
     }
 
-    /// <summary>
-    /// Cancel a booking (soft delete - INV-BOOK-006)
-    /// </summary>
+    // soft delete, never physically removes the record
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Cancel(Guid id, CancellationToken ct)
     {
@@ -93,9 +82,6 @@ public class BookingsController : ControllerBase
         return Ok(cancelled);
     }
 
-    /// <summary>
-    /// Update booking status (Staff/Admin only)
-    /// </summary>
     [HttpPatch("{id:guid}/status")]
     [Authorize(Roles = "Staff,Admin")]
     public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateStatusRequest request, CancellationToken ct)

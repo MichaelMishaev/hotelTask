@@ -2,10 +2,8 @@ using System.Security.Claims;
 
 namespace HotelBooking.Api.Middleware;
 
-/// <summary>
-/// Logs security-relevant events: auth failures, forbidden access, rate limiting.
-/// Placed after ExceptionHandlingMiddleware to capture response status codes.
-/// </summary>
+// runs after the exception handler so we can inspect the final status code
+// and log 401/403/429 for security monitoring
 public class SecurityAuditMiddleware
 {
     private readonly RequestDelegate _next;

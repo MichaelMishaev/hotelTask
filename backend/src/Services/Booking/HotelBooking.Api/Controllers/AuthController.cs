@@ -19,9 +19,6 @@ public class AuthController : ControllerBase
         _jwtTokenService = jwtTokenService;
     }
 
-    /// <summary>
-    /// Demo login with mock users
-    /// </summary>
     [HttpPost("login")]
     [EnableRateLimiting("auth")]
     public IActionResult Login([FromBody] LoginRequest request)
@@ -42,9 +39,7 @@ public class AuthController : ControllerBase
             $"{user.FirstName} {user.LastName}", user.Email, user.Role));
     }
 
-    /// <summary>
-    /// Get available demo users for login page
-    /// </summary>
+    // used by the login page to show quick-select user cards
     [HttpGet("users")]
     public IActionResult GetUsers()
     {

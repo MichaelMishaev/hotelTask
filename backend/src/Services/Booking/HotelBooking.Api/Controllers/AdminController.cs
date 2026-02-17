@@ -20,9 +20,6 @@ public class AdminController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Get dashboard statistics
-    /// </summary>
     [HttpGet("dashboard/stats")]
     public async Task<IActionResult> GetDashboardStats(CancellationToken ct)
     {
@@ -30,9 +27,6 @@ public class AdminController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get user counts by role
-    /// </summary>
     [HttpGet("dashboard/user-counts")]
     public async Task<IActionResult> GetUserCounts(CancellationToken ct)
     {
@@ -40,9 +34,6 @@ public class AdminController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get recent audit log entries
-    /// </summary>
     [HttpGet("audit-log")]
     public async Task<IActionResult> GetAuditLog([FromQuery] int limit = 50, CancellationToken ct = default)
     {
@@ -50,9 +41,6 @@ public class AdminController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get all users with optional filters
-    /// </summary>
     [HttpGet("users")]
     public async Task<IActionResult> GetAllUsers(
         [FromQuery] string? search,
@@ -65,9 +53,7 @@ public class AdminController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Update a user (demo-only with mock users)
-    /// </summary>
+    // only works with mock users in demo mode
     [HttpPut("users/{id:guid}")]
     public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserRequest request, CancellationToken ct)
     {
@@ -75,9 +61,7 @@ public class AdminController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Delete a user (demo-only with mock users)
-    /// </summary>
+    // demo only - prevents deleting yourself
     [HttpDelete("users/{id:guid}")]
     public async Task<IActionResult> DeleteUser(Guid id, CancellationToken ct)
     {
@@ -86,9 +70,6 @@ public class AdminController : ControllerBase
         return NoContent();
     }
 
-    /// <summary>
-    /// Get revenue analytics by period (daily, weekly, monthly)
-    /// </summary>
     [HttpGet("analytics/revenue")]
     public async Task<IActionResult> GetRevenueAnalytics([FromQuery] string period = "monthly", CancellationToken ct = default)
     {
@@ -96,9 +77,6 @@ public class AdminController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get occupancy analytics by period (daily, weekly, monthly)
-    /// </summary>
     [HttpGet("analytics/occupancy")]
     public async Task<IActionResult> GetOccupancyAnalytics([FromQuery] string period = "monthly", CancellationToken ct = default)
     {
@@ -106,9 +84,6 @@ public class AdminController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get bookings grouped by room type
-    /// </summary>
     [HttpGet("analytics/bookings-by-type")]
     public async Task<IActionResult> GetBookingsByType(CancellationToken ct = default)
     {

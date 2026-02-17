@@ -17,9 +17,6 @@ public class RoomsController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Get available rooms for a date range with optional filters
-    /// </summary>
     [HttpGet("availability")]
     public async Task<IActionResult> GetAvailability(
         [FromQuery] DateTime checkin,

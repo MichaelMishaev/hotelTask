@@ -20,9 +20,6 @@ public class DigitalKeysController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Get active digital key for a booking
-    /// </summary>
     [HttpGet("booking/{bookingId:guid}")]
     public async Task<IActionResult> GetByBooking(Guid bookingId, CancellationToken ct)
     {
@@ -31,9 +28,6 @@ public class DigitalKeysController : ControllerBase
         return Ok(key);
     }
 
-    /// <summary>
-    /// Get all digital keys for authenticated guest
-    /// </summary>
     [HttpGet("my-keys")]
     public async Task<IActionResult> GetMyKeys(CancellationToken ct)
     {
@@ -45,9 +39,6 @@ public class DigitalKeysController : ControllerBase
         return Ok(keys);
     }
 
-    /// <summary>
-    /// Activate a digital key for a booking
-    /// </summary>
     [HttpPost("activate")]
     public async Task<IActionResult> Activate([FromBody] ActivateDigitalKeyRequest request, CancellationToken ct)
     {
@@ -60,9 +51,6 @@ public class DigitalKeysController : ControllerBase
         return CreatedAtAction(nameof(GetByBooking), new { bookingId = key.BookingId }, key);
     }
 
-    /// <summary>
-    /// Revoke a digital key
-    /// </summary>
     [HttpDelete("{keyId:guid}")]
     public async Task<IActionResult> Revoke(Guid keyId, CancellationToken ct)
     {

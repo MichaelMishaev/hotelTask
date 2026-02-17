@@ -1,16 +1,7 @@
 namespace HotelBooking.Infrastructure.Auth;
 
-/// <summary>
-/// DEMO ONLY - Hardcoded users for demonstration purposes.
-/// NOT suitable for production. Production requirements:
-/// 1. Hash passwords with BCrypt/Argon2 (min 12 rounds)
-/// 2. Store credentials in secure vault (Azure Key Vault, AWS Secrets Manager)
-/// 3. Enforce strong password policy (12+ chars, complexity requirements)
-/// 4. Implement account lockout after 5 failed attempts
-/// 5. Add multi-factor authentication (MFA/TOTP)
-/// 6. Never commit credentials to source control
-/// 7. Use proper identity provider (ASP.NET Identity, Azure AD, Auth0)
-/// </summary>
+// hardcoded users for demo - in production you'd obviously use a real identity
+// provider with hashed passwords, lockout policies, MFA, etc.
 public static class MockUsers
 {
     public static readonly Guid GuestUserId = Guid.Parse("11111111-1111-1111-1111-111111111111");

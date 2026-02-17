@@ -8,9 +8,6 @@ namespace HotelBooking.Api.Controllers;
 [AllowAnonymous]
 public class HealthController : ControllerBase
 {
-    /// <summary>
-    /// Health check endpoint (INV-DEPLOY-001)
-    /// </summary>
     [HttpGet("health")]
     public IActionResult Health()
     {
@@ -22,9 +19,6 @@ public class HealthController : ControllerBase
         });
     }
 
-    /// <summary>
-    /// Version endpoint (INV-DEPLOY-002)
-    /// </summary>
     [HttpGet("version")]
     public IActionResult Version()
     {

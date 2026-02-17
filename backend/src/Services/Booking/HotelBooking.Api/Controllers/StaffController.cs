@@ -20,9 +20,6 @@ public class StaffController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Get today's check-ins
-    /// </summary>
     [HttpGet("dashboard/today-checkins")]
     public async Task<IActionResult> GetTodayCheckIns(CancellationToken ct)
     {
@@ -30,9 +27,6 @@ public class StaffController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get today's check-outs
-    /// </summary>
     [HttpGet("dashboard/today-checkouts")]
     public async Task<IActionResult> GetTodayCheckOuts(CancellationToken ct)
     {
@@ -40,9 +34,6 @@ public class StaffController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get all rooms with optional status filter
-    /// </summary>
     [HttpGet("rooms")]
     public async Task<IActionResult> GetAllRooms([FromQuery] string? status, CancellationToken ct)
     {
@@ -50,9 +41,6 @@ public class StaffController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Update room status (Available, Maintenance, OutOfService)
-    /// </summary>
     [HttpPut("rooms/{id:guid}/status")]
     public async Task<IActionResult> UpdateRoomStatus(Guid id, [FromBody] UpdateRoomStatusRequest request, CancellationToken ct)
     {
@@ -60,9 +48,7 @@ public class StaffController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Check in a booking (sets room to Occupied)
-    /// </summary>
+    // also flips the room status to Occupied
     [HttpPost("bookings/{id:guid}/check-in")]
     public async Task<IActionResult> CheckIn(Guid id, CancellationToken ct)
     {
@@ -71,9 +57,7 @@ public class StaffController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Check out a booking (sets room to Available)
-    /// </summary>
+    // frees up the room after checkout
     [HttpPost("bookings/{id:guid}/check-out")]
     public async Task<IActionResult> CheckOut(Guid id, CancellationToken ct)
     {
@@ -82,9 +66,6 @@ public class StaffController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get all bookings with optional filters (status, search, pagination)
-    /// </summary>
     [HttpGet("bookings")]
     public async Task<IActionResult> GetBookings(
         [FromQuery] string? status,

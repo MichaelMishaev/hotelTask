@@ -18,13 +18,11 @@ public class GuestsController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Get all bookings for a guest (INV-RBAC-001: scoped by role)
-    /// </summary>
+    // guests can only see their own, staff/admin can see anyone's
     [HttpGet("{id:guid}/bookings")]
     public async Task<IActionResult> GetBookings(Guid id, CancellationToken ct)
     {
-        // INV-RBAC-001: Guests can only view their own bookings
+        // guests can only see their own
         var userRole = User.FindFirstValue(ClaimTypes.Role) ?? "";
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
         if (userRole == "Guest" && !id.ToString().Equals(userId, StringComparison.OrdinalIgnoreCase))

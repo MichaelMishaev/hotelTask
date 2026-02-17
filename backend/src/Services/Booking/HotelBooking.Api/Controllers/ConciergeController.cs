@@ -20,9 +20,6 @@ public class ConciergeController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Get all concierge services, optionally filtered by category
-    /// </summary>
     [HttpGet("services")]
     public async Task<IActionResult> GetServices([FromQuery] string? category, CancellationToken ct)
     {
@@ -30,9 +27,6 @@ public class ConciergeController : ControllerBase
         return Ok(services);
     }
 
-    /// <summary>
-    /// Get reservations for authenticated guest
-    /// </summary>
     [HttpGet("reservations")]
     public async Task<IActionResult> GetMyReservations(CancellationToken ct)
     {
@@ -44,9 +38,6 @@ public class ConciergeController : ControllerBase
         return Ok(reservations);
     }
 
-    /// <summary>
-    /// Create a concierge service reservation
-    /// </summary>
     [HttpPost("reservations")]
     public async Task<IActionResult> CreateReservation([FromBody] CreateReservationRequest request, CancellationToken ct)
     {
@@ -61,9 +52,6 @@ public class ConciergeController : ControllerBase
         return CreatedAtAction(nameof(GetMyReservations), null, reservation);
     }
 
-    /// <summary>
-    /// Cancel a concierge reservation
-    /// </summary>
     [HttpDelete("reservations/{reservationId:guid}")]
     public async Task<IActionResult> CancelReservation(Guid reservationId, CancellationToken ct)
     {

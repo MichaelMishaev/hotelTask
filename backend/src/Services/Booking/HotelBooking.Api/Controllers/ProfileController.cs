@@ -20,9 +20,6 @@ public class ProfileController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Get guest profile by guest ID
-    /// </summary>
     [HttpGet("{guestId:guid}")]
     public async Task<IActionResult> GetProfile(Guid guestId, CancellationToken ct)
     {
@@ -36,9 +33,6 @@ public class ProfileController : ControllerBase
         return Ok(profile);
     }
 
-    /// <summary>
-    /// Update guest profile
-    /// </summary>
     [HttpPut("{guestId:guid}")]
     public async Task<IActionResult> UpdateProfile(Guid guestId, [FromBody] UpdateProfileRequest request, CancellationToken ct)
     {

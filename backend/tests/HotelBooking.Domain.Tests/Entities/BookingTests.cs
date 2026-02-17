@@ -82,7 +82,7 @@ public class BookingTests
         booking.Status.Should().Be(BookingStatus.CheckedOut);
     }
 
-    // Negative tests - INV-BOOK-003 state machine
+    // state transition edge cases
     [Fact]
     public void Cancel_AlreadyCancelled_ThrowsDomainException()
     {

@@ -20,9 +20,6 @@ public class StayPreferencesController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Get stay preferences for a booking
-    /// </summary>
     [HttpGet("booking/{bookingId:guid}")]
     public async Task<IActionResult> GetByBooking(Guid bookingId, CancellationToken ct)
     {
@@ -31,9 +28,7 @@ public class StayPreferencesController : ControllerBase
         return Ok(pref);
     }
 
-    /// <summary>
-    /// Save or update stay preferences for a booking
-    /// </summary>
+    // upsert - creates or updates preferences for the given booking
     [HttpPost]
     public async Task<IActionResult> Save([FromBody] SaveStayPreferenceRequest request, CancellationToken ct)
     {

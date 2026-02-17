@@ -20,9 +20,6 @@ public class LoyaltyController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Get loyalty account for authenticated guest
-    /// </summary>
     [HttpGet("account")]
     public async Task<IActionResult> GetAccount(CancellationToken ct)
     {
@@ -34,9 +31,6 @@ public class LoyaltyController : ControllerBase
         return Ok(account);
     }
 
-    /// <summary>
-    /// Get all available loyalty rewards
-    /// </summary>
     [HttpGet("rewards")]
     public async Task<IActionResult> GetRewards(CancellationToken ct)
     {
@@ -44,9 +38,6 @@ public class LoyaltyController : ControllerBase
         return Ok(rewards);
     }
 
-    /// <summary>
-    /// Redeem a loyalty reward
-    /// </summary>
     [HttpPost("redeem")]
     public async Task<IActionResult> RedeemReward([FromBody] RedeemRewardRequest request, CancellationToken ct)
     {

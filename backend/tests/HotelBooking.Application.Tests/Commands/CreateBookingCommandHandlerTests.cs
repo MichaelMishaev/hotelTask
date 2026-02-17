@@ -133,7 +133,7 @@ public class CreateBookingCommandHandlerTests
     [Fact]
     public async Task Handle_ValidBooking_ServerCalculatesPrice()
     {
-        // INV-BOOK-002: Server-authoritative pricing
+        // price is always calculated server-side, never from client input
         var room = CreateRoom();
         var guest = CreateGuest();
         var checkIn = DateTime.Today.AddDays(1);
