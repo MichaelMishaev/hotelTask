@@ -30,6 +30,17 @@ fi
 echo -e "${YELLOW}Stopping any existing containers...${NC}"
 docker compose down --remove-orphans 2>/dev/null || true
 
+# Kill anything already using our ports
+PORTS=(5672 15672 1025 8025 5288 5289 5010 3000)
+for port in "${PORTS[@]}"; do
+    pid=$(lsof -ti :$port 2>/dev/null || true)
+    if [ -n "$pid" ]; then
+        echo -e "${YELLOW}Port $port in use (PID $pid) - killing...${NC}"
+        kill -9 $pid 2>/dev/null || true
+    fi
+done
+sleep 1
+
 # Build and start all services
 echo -e "${GREEN}Building and starting all services...${NC}"
 docker compose up --build -d
