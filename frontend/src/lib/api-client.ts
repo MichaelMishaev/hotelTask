@@ -1,6 +1,6 @@
 import type { ApiError } from '../types';
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 // SECURITY: Production should include CSRF tokens in state-changing requests when using cookie-based auth
 
 class ApiClient {
