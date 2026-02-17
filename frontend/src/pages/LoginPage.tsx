@@ -326,6 +326,7 @@ export function LoginPage() {
               loop
               muted
               playsInline
+              controls
               // @ts-expect-error webkit vendor attr for older iOS
               webkit-playsinline="true"
               preload="auto"
