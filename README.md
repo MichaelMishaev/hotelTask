@@ -32,12 +32,13 @@ docker compose up --build
 
 That's it. The script builds everything, waits for services to be healthy, and opens your browser.
 
-| Service | URL |
-|---------|-----|
-| Frontend | http://localhost:3000 |
-| Backend API | http://localhost:5288 |
-| Swagger Docs | http://localhost:5288/swagger |
-| RabbitMQ Management | http://localhost:15672 (guest/guest) |
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| Frontend | http://localhost:3000 | See demo users below |
+| Backend API | http://localhost:5288 | — |
+| Swagger Docs | http://localhost:5288/swagger | — |
+| RabbitMQ Management | http://localhost:15672 | `guest` / `guest` |
+| MailHog (Email UI) | http://localhost:8025 | No login needed |
 
 To stop everything:
 
