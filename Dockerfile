@@ -52,8 +52,9 @@ RUN chmod +x /app/start.sh && \
     rm -f /etc/nginx/sites-enabled/default && \
     rm -f /etc/nginx/sites-available/default
 
-# Backend listens on 8080 internally; nginx proxies to it
-ENV ASPNETCORE_URLS=http://+:8080
+# Backend listens on 3001 internally; nginx proxies to it
+# nginx claims both PORT (5000) and 8080 to handle all Railway routing
+ENV ASPNETCORE_URLS=http://+:3001
 EXPOSE 80
 
 CMD ["/app/start.sh"]
