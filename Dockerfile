@@ -44,13 +44,16 @@ COPY --from=backend-build /app/publish .
 # Copy React frontend static files
 COPY --from=frontend-build /app/dist /var/www/html
 
-# Copy config files
-COPY deploy/nginx.conf /etc/nginx/sites-enabled/default.template
+# Copy config files (template stored outside nginx dirs to avoid auto-loading)
+COPY deploy/nginx.conf /app/nginx.conf.template
 COPY deploy/supervisord.conf /etc/supervisor/conf.d/app.conf
 COPY deploy/start.sh /app/start.sh
-RUN chmod +x /app/start.sh && rm -f /etc/nginx/sites-enabled/default
+RUN chmod +x /app/start.sh && \
+    rm -f /etc/nginx/sites-enabled/default && \
+    rm -f /etc/nginx/sites-available/default
 
-ENV ASPNETCORE_URLS=http://+:5000
+# Backend listens on 8080 internally; nginx proxies to it
+ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 80
 
 CMD ["/app/start.sh"]
