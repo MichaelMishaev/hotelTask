@@ -41,5 +41,8 @@ docs/
 # Screenshots
 *.png
 
+# But keep frontend public assets
+!frontend/public/**/*.png
+
 # Playwright MCP
 .playwright-mcp/
