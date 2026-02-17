@@ -126,7 +126,7 @@ export function RoomDetailsPage() {
             <div className="text-start">
               <p className="text-slate-500 text-sm font-medium">{t('roomDetails.startingFrom')}</p>
               <p className="text-3xl font-extrabold text-primary">
-                ${room.pricePerNight}
+                ${Math.round(room.pricePerNight)}
                 <span className="text-lg font-normal text-slate-500">{t('common.perNight')}</span>
               </p>
             </div>
@@ -174,7 +174,7 @@ export function RoomDetailsPage() {
               {t('common.totalPrice')}
             </span>
             <p className="text-xl font-extrabold text-slate-900">
-              ${room.pricePerNight}
+              ${Math.round(room.pricePerNight)}
               <span className="text-sm font-medium text-slate-500">{t('common.perNight')}</span>
             </p>
           </div>

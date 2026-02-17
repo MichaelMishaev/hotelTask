@@ -293,7 +293,7 @@ export function SearchPage() {
                 tabIndex={0}
                 onClick={() => handleViewRoom(room)}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleViewRoom(room); } }}
-                aria-label={`${roomTitle} - $${room.pricePerNight} per night, $${totalPrice} total`}
+                aria-label={`${roomTitle} - $${Math.round(room.pricePerNight)} per night, $${Math.round(totalPrice)} total`}
                 className="cursor-pointer bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
               >
                 <img
@@ -310,7 +310,7 @@ export function SearchPage() {
                     </div>
                     <div className="text-end">
                       <p className="text-xl font-bold text-primary">
-                        ${room.pricePerNight.toLocaleString()}
+                        ${Math.round(room.pricePerNight).toLocaleString()}
                         <span className="text-xs text-gray-400 font-normal">{t('common.perNight')}</span>
                       </p>
                     </div>
@@ -318,7 +318,7 @@ export function SearchPage() {
                   <div className="flex items-center justify-between mt-4">
                     <div>
                       <p className="text-xs text-gray-400 uppercase font-bold">{t('search.totalStayPrice')}</p>
-                      <p className="text-lg font-bold">${totalPrice.toLocaleString()}</p>
+                      <p className="text-lg font-bold">${Math.round(totalPrice).toLocaleString()}</p>
                     </div>
                     <button
                       data-testid={`view-room-${room.id}`}

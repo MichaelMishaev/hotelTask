@@ -28,7 +28,7 @@ public class PricingEngine : IPricingEngine
             var seasonMultiplier = GetSeasonMultiplier(currentDate);
             var weekendMultiplier = GetWeekendMultiplier(currentDate);
             var combinedMultiplier = seasonMultiplier * weekendMultiplier;
-            var nightRate = baseRate * combinedMultiplier;
+            var nightRate = Math.Round(baseRate * combinedMultiplier, 2);
 
             breakdown.Add(new PriceBreakdownItem
             {
@@ -42,7 +42,7 @@ public class PricingEngine : IPricingEngine
         }
 
         var nights = (request.CheckOut - request.CheckIn).Days;
-        var averagePricePerNight = nights > 0 ? totalPrice / nights : 0m;
+        var averagePricePerNight = nights > 0 ? Math.Round(totalPrice / nights, 2) : 0m;
 
         return new PriceCalculationResponse
         {

@@ -103,7 +103,7 @@ export function BookingPage() {
         (1000 * 60 * 60 * 24),
     ),
   );
-  const pricePerNight = nights > 0 ? booking.totalAmount / nights : 100;
+  const pricePerNight = nights > 0 ? Math.round(booking.totalAmount / nights) : 100;
   const serviceFee = booking.totalAmount * 0.12;
   const grandTotal = booking.totalAmount + serviceFee;
   const isStaff = user?.role === 'Staff' || user?.role === 'Admin';
