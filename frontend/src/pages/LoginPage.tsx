@@ -283,7 +283,7 @@ export function LoginPage() {
               </p>
 
               {/* Create Account Footer */}
-              <p className="pb-8 text-center text-sm text-gray-500">
+              <p className="pb-4 text-center text-sm text-gray-500">
                 {t('login.noAccount')}{' '}
                 <button type="button" className="font-semibold text-primary hover:text-primary/80">
                   {t('login.createAccount')}
@@ -291,6 +291,31 @@ export function LoginPage() {
               </p>
             </>
           )}
+        </div>
+      </div>
+
+      {/* Video Showcase */}
+      <div className="w-full px-4 pb-8 pt-2">
+        <div className="mx-auto max-w-md overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
+          <div className="bg-gradient-to-r from-primary to-primary/80 px-4 py-2.5 flex items-center gap-2">
+            <MaterialIcon name="play_circle" className="text-white text-xl" />
+            <span className="text-sm font-semibold text-white">{t('login.title')} — Full-Stack Demo</span>
+          </div>
+          <div className="relative bg-black">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full aspect-video object-contain"
+            >
+              <source src="/hotel-hero.mp4" type="video/mp4" />
+            </video>
+          </div>
+          <div className="bg-gray-50 px-4 py-2 flex items-center justify-center gap-1.5">
+            <MaterialIcon name="info" className="text-gray-400 text-sm" />
+            <span className="text-xs text-gray-400">Grand Hotel Booking Platform</span>
+          </div>
         </div>
       </div>
     </div>
