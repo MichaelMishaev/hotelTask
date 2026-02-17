@@ -46,6 +46,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [videoMuted, setVideoMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Force play on mobile - iOS Safari blocks autoPlay even when muted
@@ -324,7 +325,7 @@ export function LoginPage() {
               ref={videoRef}
               autoPlay
               loop
-              muted
+              muted={videoMuted}
               playsInline
               controls
               // @ts-expect-error webkit vendor attr for older iOS
@@ -334,6 +335,19 @@ export function LoginPage() {
             >
               <source src="/hotel-hero.mp4" type="video/mp4" />
             </video>
+            <button
+              type="button"
+              onClick={() => {
+                const v = videoRef.current;
+                if (v) {
+                  v.muted = !v.muted;
+                  setVideoMuted(v.muted);
+                }
+              }}
+              className="absolute top-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm hover:bg-black/80 transition-colors z-10"
+            >
+              <MaterialIcon name={videoMuted ? 'volume_off' : 'volume_up'} className="text-xl" />
+            </button>
           </div>
           <div className="bg-gray-50 px-4 py-2 flex items-center justify-center gap-1.5">
             <MaterialIcon name="info" className="text-gray-400 text-sm" />
