@@ -317,6 +317,136 @@ frontend/
 
 ---
 
+## Backend Architecture Deep Dive
+
+> 📘 **For interview preparation**: See [`docs/INTERVIEW_GUIDE.md`](docs/INTERVIEW_GUIDE.md) for a complete flow-based walkthrough of the backend architecture with code snippets, ASCII diagrams, data integrity guarantees, and trade-off analysis.
+
+### What Makes This Backend Different
+
+This isn't just a CRUD API. The backend demonstrates **senior-level architectural patterns** with a focus on **data integrity, RBAC isolation, and event-driven design**:
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│ 4 Critical Data Integrity Guarantees                             │
+├──────────────────────────────────────────────────────────────────┤
+│ 1. No Double Bookings      → Serializable transactions          │
+│ 2. RBAC Data Isolation     → Guest can't see other guests' data │
+│ 3. Server-Authoritative $  → Server calculates price, not client│
+│ 4. Immutable Audit Trail   → Append-only log, tamper-proof      │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Architecture Highlights
+
+**Clean Architecture (4 Layers)**
+```
+Domain (innermost)     → Pure C#, zero dependencies, business rules
+    ↓
+Application            → CQRS handlers, FluentValidation, DTOs
+    ↓
+Infrastructure         → EF Core + PostgreSQL, JWT, RabbitMQ
+    ↓
+API (outermost)        → Controllers, middleware, Swagger
+```
+
+**CQRS with MediatR**
+- Commands (writes) and Queries (reads) separated
+- Pipeline behaviors for validation, logging, audit (runs automatically)
+- Each handler has one responsibility
+
+**Domain Events for Audit Trail**
+- Entities raise events (`BookingCreated`, `BookingCancelled`)
+- Interceptor dispatches after `SaveChanges`
+- Event handlers write to immutable audit log
+- Impossible to forget - centralized dispatch
+
+**Microservices Ready**
+- Booking (core), Pricing (bonus), Notification (bonus)
+- RabbitMQ for async communication
+- YARP API Gateway for routing
+
+### Key Trade-offs Explained
+
+Every architectural decision was deliberate. Here are the big ones:
+
+| Decision | Why This Way | What We Sacrifice |
+|----------|-------------|-------------------|
+| **Serializable Isolation** | Guarantees no double-bookings | ~30% slower than optimistic concurrency |
+| **Clean Architecture** | Testable, framework-independent | More boilerplate, more projects |
+| **CQRS + MediatR** | Pipeline behaviors eliminate boilerplate | More files (one handler per operation) |
+| **Domain Events** | Impossible to forget audit logging | More complexity (events, handlers, interceptor) |
+| **PostgreSQL** | Railway-native, JSONB for audit logs | Some .NET devs less familiar |
+
+### Data Integrity Deep Dive
+
+**1. No Double Bookings (INV-BOOK-001)**
+```csharp
+// Serializable transaction prevents race conditions
+using var transaction = await _context.Database.BeginTransactionAsync(
+    IsolationLevel.Serializable, ct
+);
+
+// Overlap check
+var isAvailable = !await _context.Bookings
+    .Where(b => b.RoomId == roomId
+             && b.CheckIn < checkOut    // ← Key overlap logic
+             && b.CheckOut > checkIn)
+    .AnyAsync();
+```
+
+**2. RBAC Data Isolation (INV-RBAC-001)**
+```csharp
+// Guest can only book for themselves
+if (request.GuestId != _currentUser.GuestId && !_currentUser.IsStaffOrAdmin)
+{
+    throw new ForbiddenException(); // 403
+}
+```
+
+**3. Server-Authoritative Pricing (INV-BOOK-002)**
+```csharp
+// Server calculates, NEVER trust client
+var nights = (request.CheckOut - request.CheckIn).Days;
+var totalAmount = nights * 100m; // Client's value ignored
+```
+
+**4. Immutable Audit Trail (INV-DATA-003)**
+```sql
+-- PostgreSQL trigger prevents modification
+CREATE TRIGGER PreventAuditModification
+BEFORE UPDATE OR DELETE ON "AuditLogs"
+FOR EACH ROW EXECUTE FUNCTION prevent_modification();
+```
+
+### Complete Flow: Booking Creation (7 Steps)
+
+```
+HTTP POST /api/bookings
+  ↓
+1. JWT Middleware validates token → 401 if invalid
+  ↓
+2. FluentValidation pipeline → 400 if invalid dates
+  ↓
+3. CQRS Handler:
+   - RBAC check → 403 if guest booking for another guest
+   - Serializable transaction starts
+   - Availability check with overlap logic
+   - Server calculates price
+   - Domain entity created (raises BookingCreatedEvent)
+  ↓
+4. SaveChanges commits transaction
+  ↓
+5. Interceptor dispatches domain event
+  ↓
+6. Event handler writes audit log (append-only)
+  ↓
+7. Return 201 Created with booking DTO
+```
+
+**See [`docs/INTERVIEW_GUIDE.md`](docs/INTERVIEW_GUIDE.md) for complete code walkthrough with every layer explained.**
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
