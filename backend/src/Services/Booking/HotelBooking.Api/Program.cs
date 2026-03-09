@@ -80,7 +80,18 @@ builder.Services.AddRateLimiter(options =>
 
 // CORS for frontend - Security: explicit headers and methods only
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-    ?? new[] { "http://localhost:5173", "http://localhost:5174", "http://localhost:3000", "https://hoteltask-production.up.railway.app", "https://frontend-production-4907.up.railway.app" };
+    ?? new[] {
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:3000",
+        "https://hoteltask-production.up.railway.app",
+        "https://frontend-production-4907.up.railway.app",
+        // Custom domain (both with and without www, both HTTP and HTTPS during transition)
+        "https://www.ailo.digital",
+        "https://ailo.digital",
+        "http://www.ailo.digital",  // Temporary until HTTPS redirect is verified working
+        "http://ailo.digital"
+    };
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
